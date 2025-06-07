@@ -16,7 +16,7 @@ def cifrado_cesar(texto, desplazamiento, modo='cifrar'):
     return resultado
 
 def app_cesar():
-    st.subheader("🔐 Cifrado César")
+    st.subheader("Cifrado César")
     texto = st.text_input("Texto")
     desplazamiento = st.slider("Desplazamiento", 1, 25, 3)
     modo = st.radio("Modo", ["Cifrar", "Descifrar"])
@@ -35,7 +35,7 @@ def metodo_euler(f, x0, y0, h, n):
     return xs, ys
 
 def app_euler():
-    st.subheader("📈 Método de Euler para EDOs")
+    st.subheader("Método de Euler para EDOs")
     fx = st.text_input("Función f(x, y)", value="x + y")
     x0 = st.number_input("x0", value=0.0)
     y0 = st.number_input("y0", value=1.0)
@@ -65,7 +65,7 @@ def gauss_reduction(A):
     return A
 
 def app_gauss():
-    st.subheader("📉 Reducción Gaussiana")
+    st.subheader("Reducción Gaussiana")
     filas = st.number_input("Número de filas", 1, 10, 3)
     columnas = st.number_input("Número de columnas", 1, 10, 4)
     datos = st.text_area("Matriz (fila por fila, separados por espacios)", "1 2 3 4\n5 6 7 8\n9 10 11 12")
@@ -80,7 +80,7 @@ def app_gauss():
             st.error(f"Error: {e}")
 
 def app_corr_cov():
-    st.subheader("📊 Correlación y Covarianza")
+    st.subheader("Correlación y Covarianza")
     x_input = st.text_input("Valores de X (separados por comas)", "1, 2, 3, 4, 5")
     y_input = st.text_input("Valores de Y (separados por comas)", "2, 4, 6, 8, 10")
 
@@ -96,7 +96,7 @@ def app_corr_cov():
             st.error("Error al procesar los datos.")
 
 def app_matrices():
-    st.subheader("➕ Operaciones con Matrices")
+    st.subheader("Operaciones con Matrices")
     mat1 = st.text_area("Matriz A", "1 2\n3 4")
     mat2 = st.text_area("Matriz B", "5 6\n7 8")
     operacion = st.selectbox("Operación", ["Suma", "Resta", "Multiplicación"])
@@ -116,7 +116,7 @@ def app_matrices():
         except:
             st.error("Error: asegúrate de que las matrices tengan dimensiones compatibles.")
 
-st.title("🧮 Calculadoras Matemáticas Interactivas")
+st.title("Calculadoras Matemáticas Interactivas")
 
 opcion = st.sidebar.selectbox("Selecciona una herramienta", [
     "Cifrado César",
