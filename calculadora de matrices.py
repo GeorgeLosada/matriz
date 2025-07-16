@@ -9,7 +9,7 @@ def inicializar_matriz(filas, columnas, aleatoria=True):
         return np.zeros((filas, columnas), dtype=int)
 
 def mostrar_editor_matriz(key, matriz):
-    with st.expander(f"✏️ Editar Matriz {key}", expanded=False):
+    with st.expander(f" Editar Matriz {key}", expanded=False):
         col1, col2 = st.columns(2)
         with col1:
             filas = st.number_input(f"Filas {key}", 
@@ -42,15 +42,15 @@ def mostrar_editor_matriz(key, matriz):
         # Botones de acción
         c1, c2, c3 = st.columns(3)
         with c1:
-            if st.button(f"🔄 Generar aleatoria {key}"):
+            if st.button(f"Generar aleatoria {key}"):
                 st.session_state[key] = inicializar_matriz(filas, columnas)
                 st.experimental_rerun()
         with c2:
-            if st.button(f"🧹 Limpiar {key}"):
+            if st.button(f"Limpiar {key}"):
                 st.session_state[key] = np.zeros((filas, columnas), dtype=int)
                 st.experimental_rerun()
         with c3:
-            if st.button(f"💾 Guardar cambios {key}"):
+            if st.button(f"Guardar cambios {key}"):
                 st.success(f"Matriz {key} actualizada!")
 
 def verificar_compatibilidad(m1, m2, operacion):
@@ -61,8 +61,8 @@ def verificar_compatibilidad(m1, m2, operacion):
     return True
 
 # Configuración de página
-st.set_page_config(layout="centered", page_icon="🧮")
-st.title("🧮 Calculadora Avanzada de Matrices")
+st.set_page_config(layout="centered")
+st.title("Calculadora Avanzada de Matrices")
 st.markdown("""
 <style>
 div[data-testid="stExpander"] div[role="button"] p {
@@ -97,7 +97,7 @@ with col2:
     st.caption(f"Dimensión: {B.shape[0]}×{B.shape[1]}")
 
 # Operaciones matemáticas
-st.header("🧮 Operaciones Matriciales")
+st.header("Operaciones Matriciales")
 operacion = st.selectbox("Seleccione una operación:", [
     "Suma (A + B)",
     "Resta (A - B)",
@@ -115,12 +115,12 @@ operacion = st.selectbox("Seleccione una operación:", [
 # Contenedor de resultados
 result_container = st.container()
 with result_container:
-    st.header("📊 Resultado")
+    st.header("Resultado")
     
     try:
         if operacion == "Suma (A + B)":
             if not verificar_compatibilidad(A, B, "Suma"):
-                st.error("❌ Las matrices deben tener la misma dimensión para sumar")
+                st.error("Las matrices deben tener la misma dimensión para sumar")
             else:
                 resultado = A + B
                 st.dataframe(resultado, use_container_width=True)
@@ -128,7 +128,7 @@ with result_container:
                 
         elif operacion == "Resta (A - B)":
             if not verificar_compatibilidad(A, B, "Resta"):
-                st.error("❌ Las matrices deben tener la misma dimensión para restar")
+                st.error("Las matrices deben tener la misma dimensión para restar")
             else:
                 resultado = A - B
                 st.dataframe(resultado, use_container_width=True)
@@ -146,7 +146,7 @@ with result_container:
             
         elif operacion == "Multiplicación elemento a elemento (A * B)":
             if not verificar_compatibilidad(A, B, "Multiplicación elemento a elemento"):
-                st.error("❌ Las matrices deben tener la misma dimensión")
+                st.error("Las matrices deben tener la misma dimensión")
             else:
                 resultado = A * B
                 st.dataframe(resultado, use_container_width=True)
@@ -154,7 +154,7 @@ with result_container:
                 
         elif operacion == "Multiplicación matricial (A × B)":
             if not verificar_compatibilidad(A, B, "Multiplicación matricial"):
-                st.error("❌ El número de columnas de A debe igualar el número de filas de B")
+                st.error("El número de columnas de A debe igualar el número de filas de B")
             else:
                 resultado = np.dot(A, B)
                 st.dataframe(resultado, use_container_width=True)
@@ -177,7 +177,7 @@ with result_container:
             
             if operacion == "Suma diagonal":
                 if matriz_seleccionada.shape[0] != matriz_seleccionada.shape[1]:
-                    st.error("❌ La matriz debe ser cuadrada")
+                    st.error("La matriz debe ser cuadrada")
                 else:
                     st.info(f"Suma diagonal = {np.trace(matriz_seleccionada)}")
                     
@@ -198,4 +198,4 @@ with result_container:
 
 # Información adicional
 st.divider()
-st.info("💡 Consejo: Puedes cambiar el tamaño de las matrices editando los valores de filas y columnas")
+st.info("Consejo: Puedes cambiar el tamaño de las matrices editando los valores de filas y columnas")
