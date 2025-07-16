@@ -1,157 +1,144 @@
 import streamlit as st
 import numpy as np
 
-def inicializar_matriz(filas, columnas, aleatoria=True):
-    if aleatoria:
-        return np.random.randint(100, 201, size=(filas, columnas))
-    else:
-        return np.zeros((filas, columnas), dtype=int)
+def cifrado_cesar(texto, desplazamiento, modo='cifrar'):
+    resultado = ''
+    for c in texto:
+        if c.isalpha():
+            base = ord('A') if c.isupper() else ord('a')
+            if modo == 'cifrar':
+                nuevo = (ord(c) - base + desplazamiento) % 26 + base
+            else:
+                nuevo = (ord(c) - base - desplazamiento) % 26 + base
+            resultado += chr(nuevo)
+        else:
+            resultado += c
+    return resultado
 
-def mostrar_editor_matriz(key, matriz):
-    with st.expander(f"Editar Matriz {key}", expanded=True):
-        filas, columnas = matriz.shape
-        nueva_filas = st.number_input(f"Filas {key}", min_value=1, value=filas, key=f"filas_{key}")
-        nueva_columnas = st.number_input(f"Columnas {key}", min_value=1, value=columnas, key=f"columnas_{key}")
-        
-        if nueva_filas != filas or nueva_columnas != columnas:
-            matriz = np.zeros((nueva_filas, nueva_columnas), dtype=int)
-            st.session_state[key] = matriz
-            st.experimental_rerun()
-        
-        # Editor de matriz
-        st.write(f"Ingrese valores para Matriz {key}:")
-        nueva_matriz = []
-        for i in range(matriz.shape[0]):
-            cols = st.columns(matriz.shape[1])
-            fila = []
-            for j in range(matriz.shape[1]):
-                with cols[j]:
-                    fila.append(st.number_input(
-                        f"{key}[{i},{j}]", 
-                        value=int(matriz[i,j]), 
-                        key=f"{key}_{i}_{j}"))
-            nueva_matriz.append(fila)
-        
-        if st.button(f"Guardar Matriz {key}"):
-            st.session_state[key] = np.array(nueva_matriz, dtype=int)
-            st.success(f"Matriz {key} actualizada!")
-            st.experimental_rerun()
-        
-        if st.button(f"Generar aleatoria {key}"):
-            st.session_state[key] = inicializar_matriz(matriz.shape[0], matriz.shape[1])
-            st.experimental_rerun()
+def app_cesar():
+    st.subheader("🔐 Cifrado César")
+    st.subheader("Cifrado César")
+    texto = st.text_input("Texto")
+    desplazamiento = st.slider("Desplazamiento", 1, 25, 3)
+    modo = st.radio("Modo", ["Cifrar", "Descifrar"])
+    if st.button("Ejecutar"):
+        resultado = cifrado_cesar(texto, desplazamiento, modo.lower())
+        st.text_area("Resultado", resultado, height=150)
 
-def verificar_compatibilidad(m1, m2, operacion):
-    if operacion in ["Suma de matrices", "Resta de matrices", "Multiplicación elemento a elemento"]:
-        return m1.shape == m2.shape
-    elif operacion == "Multiplicación matricial":
-        return m1.shape[1] == m2.shape[0]
-    return True
+def metodo_euler(f, x0, y0, h, n):
+    xs = [x0]
+    ys = [y0]
+    for _ in range(n):
+        y0 += h * f(x0, y0)
+        x0 += h
+        xs.append(x0)
+        ys.append(y0)
+    return xs, ys
 
-# Configuración inicial
-st.set_page_config(layout="wide")
-st.title("🔢 Calculadora de Matrices Interactiva")
+def app_euler():
+    st.subheader("📈 Método de Euler para EDOs")
+    st.subheader("Método de Euler para EDOs")
+    fx = st.text_input("Función f(x, y)", value="x + y")
+    x0 = st.number_input("x0", value=0.0)
+    y0 = st.number_input("y0", value=1.0)
+    h = st.number_input("Paso h", value=0.1)
+    n = st.number_input("Número de pasos", value=10, step=1)
 
-# Inicialización de matrices
-if 'A' not in st.session_state:
-    st.session_state['A'] = inicializar_matriz(3, 3)
-if 'B' not in st.session_state:
-    st.session_state['B'] = inicializar_matriz(3, 3)
+    if st.button("Calcular"):
+        f = lambda x, y: eval(fx)
+        xs, ys = metodo_euler(f, x0, y0, h, int(n))
+        st.write("Resultados:")
+        for i in range(len(xs)):
+            st.write(f"x = {xs[i]:.4f}, y = {ys[i]:.4f}")
 
-A = st.session_state['A']
-B = st.session_state['B']
+def gauss_reduction(A):
+    A = A.astype(float)
+    n, m = A.shape
+    for i in range(min(n, m)):
+        if A[i, i] == 0:
+            for j in range(i + 1, n):
+                if A[j, i] != 0:
+                    A[[i, j]] = A[[j, i]]
+                    break
+        if A[i, i] != 0:
+            A[i] = A[i] / A[i, i]
+            for j in range(i + 1, n):
+                A[j] = A[j] - A[j, i] * A[i]
+    return A
 
-# Sidebar para configuración general
-with st.sidebar:
-    st.header("Configuración General")
-    default_size = st.number_input("Tamaño predeterminado (n×n)", min_value=1, value=3)
-    if st.button("Reiniciar todas las matrices"):
-        st.session_state['A'] = inicializar_matriz(default_size, default_size)
-        st.session_state['B'] = inicializar_matriz(default_size, default_size)
-        st.experimental_rerun()
+def app_gauss():
+    st.subheader("📉 Reducción Gaussiana")
+    st.subheader("Reducción Gaussiana")
+    filas = st.number_input("Número de filas", 1, 10, 3)
+    columnas = st.number_input("Número de columnas", 1, 10, 4)
+    datos = st.text_area("Matriz (fila por fila, separados por espacios)", "1 2 3 4\n5 6 7 8\n9 10 11 12")
+    if st.button("Reducir"):
+        try:
+            matriz = [list(map(float, fila.split())) for fila in datos.strip().split('\n')]
+            A = np.array(matriz)
+            A_reducida = gauss_reduction(A)
+            st.write("Matriz escalonada:")
+            st.write(A_reducida)
+        except Exception as e:
+            st.error(f"Error: {e}")
 
-# Editor de matrices en pestañas
-tab1, tab2 = st.tabs(["Matriz A", "Matriz B"])
-with tab1:
-    mostrar_editor_matriz('A', A)
-with tab2:
-    mostrar_editor_matriz('B', B)
+def app_corr_cov():
+    st.subheader("📊 Correlación y Covarianza")
+    st.subheader("Correlación y Covarianza")
+    x_input = st.text_input("Valores de X (separados por comas)", "1, 2, 3, 4, 5")
+    y_input = st.text_input("Valores de Y (separados por comas)", "2, 4, 6, 8, 10")
 
-# Operaciones
-st.header("Operaciones Matriciales")
-opcion = st.selectbox("Seleccione operación:", [
-    "Ver matrices",
-    "Producto por escalar",
-    "Suma de matrices",
-    "Resta de matrices",
-    "Multiplicación elemento a elemento",
-    "Suma diagonal",
-    "Menor valor",
-    "Mayor valor",
-    "Suma total",
-    "Promedio",
-    "Multiplicación matricial",
-    "Transpuesta"
+    if st.button("Calcular"):
+        try:
+            x = np.array(list(map(float, x_input.split(','))))
+            y = np.array(list(map(float, y_input.split(','))))
+            cov = np.cov(x, y)[0][1]
+            corr = np.corrcoef(x, y)[0][1]
+            st.write(f"Covarianza: {cov:.4f}")
+            st.write(f"Correlación: {corr:.4f}")
+        except:
+            st.error("Error al procesar los datos.")
+
+def app_matrices():
+    st.subheader("➕ Operaciones con Matrices")
+    st.subheader("Operaciones con Matrices")
+    mat1 = st.text_area("Matriz A", "1 2\n3 4")
+    mat2 = st.text_area("Matriz B", "5 6\n7 8")
+    operacion = st.selectbox("Operación", ["Suma", "Resta", "Multiplicación"])
+
+    if st.button("Ejecutar operación"):
+        try:
+            A = np.array([list(map(float, fila.split())) for fila in mat1.strip().split('\n')])
+            B = np.array([list(map(float, fila.split())) for fila in mat2.strip().split('\n')])
+            if operacion == "Suma":
+                resultado = A + B
+            elif operacion == "Resta":
+                resultado = A - B
+            else:
+                resultado = A @ B
+            st.write("Resultado:")
+            st.write(resultado)
+        except:
+            st.error("Error: asegúrate de que las matrices tengan dimensiones compatibles.")
+
+st.title("🧮 Calculadoras Matemáticas Interactivas")
+st.title("Calculadoras Matemáticas Interactivas")
+
+opcion = st.sidebar.selectbox("Selecciona una herramienta", [
+    "Cifrado César",
+    "Método de Euler (EDOs)",
+    "Reducción Gaussiana",
+    "Correlación y Covarianza",
+    "Operaciones con Matrices"
 ])
 
-result_container = st.container()
-
-with result_container:
-    if opcion == "Ver matrices":
-        col1, col2 = st.columns(2)
-        with col1:
-            st.subheader("Matriz A")
-            st.dataframe(A)
-        with col2:
-            st.subheader("Matriz B")
-            st.dataframe(B)
-    
-    elif opcion == "Producto por escalar":
-        matriz_op = st.radio("Seleccione matriz:", ('A', 'B'))
-        escalar = st.number_input("Ingrese escalar:", value=2)
-        matriz = A if matriz_op == 'A' else B
-        resultado = matriz * escalar
-        st.subheader(f"Resultado: {matriz_op} × {escalar}")
-        st.dataframe(resultado)
-    
-    elif opcion in ["Suma de matrices", "Resta de matrices", "Multiplicación elemento a elemento", "Multiplicación matricial"]:
-        if not verificar_compatibilidad(A, B, opcion):
-            st.error("Las matrices no tienen dimensiones compatibles para esta operación")
-        else:
-            if opcion == "Suma de matrices":
-                resultado = A + B
-                st.subheader("A + B")
-            elif opcion == "Resta de matrices":
-                resultado = A - B
-                st.subheader("A - B")
-            elif opcion == "Multiplicación elemento a elemento":
-                resultado = A * B
-                st.subheader("A * B (element-wise)")
-            elif opcion == "Multiplicación matricial":
-                resultado = np.dot(A, B)
-                st.subheader("A × B (matricial)")
-            st.dataframe(resultado)
-    
-    elif opcion in ["Suma diagonal", "Menor valor", "Mayor valor", "Suma total", "Promedio"]:
-        matriz_op = st.radio("Seleccione matriz:", ('A', 'B'))
-        matriz = A if matriz_op == 'A' else B
-        
-        if opcion == "Suma diagonal":
-            if matriz.shape[0] != matriz.shape[1]:
-                st.error("La matriz debe ser cuadrada para calcular la diagonal")
-            else:
-                st.success(f"Suma diagonal: {np.trace(matriz)}")
-        elif opcion == "Menor valor":
-            st.success(f"Menor valor: {matriz.min()}")
-        elif opcion == "Mayor valor":
-            st.success(f"Mayor valor: {matriz.max()}")
-        elif opcion == "Suma total":
-            st.success(f"Suma total: {matriz.sum()}")
-        elif opcion == "Promedio":
-            st.success(f"Promedio: {matriz.mean():.2f}")
-    
-    elif opcion == "Transpuesta":
-        matriz_op = st.radio("Seleccione matriz:", ('A', 'B'))
-        matriz = A if matriz_op == 'A' else B
-        st.subheader(f"Transpuesta de {matriz_op}")
-        st.dataframe(matriz.T)
+if opcion == "Cifrado César":
+    app_cesar()
+elif opcion == "Método de Euler (EDOs)":
+    app_euler()
+elif opcion == "Reducción Gaussiana":
+    app_gauss()
+elif opcion == "Correlación y Covarianza":
+    app_corr_cov()
+elif opcion == "Operaciones con Matrices":
+    app_matrices()
