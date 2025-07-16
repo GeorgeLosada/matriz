@@ -3,12 +3,42 @@ import numpy as np
 
 TAM = 20
 
-# [Las funciones inicializar_matriz, producto_por_escalar, ... se mantienen igual] 
+def inicializar_matriz():
+    return np.random.randint(100, 201, size=(TAM, TAM))
+
+def producto_por_escalar(matriz, escalar):
+    return matriz * escalar
+
+def suma_matrices(m1, m2):
+    return m1 + m2
+
+def resta_matrices(m1, m2):
+    return m1 - m2
+
+def multiplicacion_elemento(m1, m2):
+    return m1 * m2
+
+def suma_diagonal(matriz):
+    return np.trace(matriz)
+
+def menor_valor(matriz):
+    return matriz.min()
+
+def mayor_valor(matriz):
+    return matriz.max()
+
+def suma_total(matriz):
+    return matriz.sum()
+
+def promedio_matriz(matriz):
+    return int(matriz.mean())
+
+def multiplicacion_matricial(m1, m2):
+    return np.dot(m1, m2)
 
 st.set_page_config(layout="wide")
 st.title("🔢 Calculadora de Matrices - George Losada")
 
-# Inicialización de matrices en session_state
 if 'A' not in st.session_state:
     st.session_state['A'] = inicializar_matriz()
 if 'B' not in st.session_state:
@@ -47,8 +77,8 @@ if opcion == "Ver matrices A y B":
 
 elif opcion == "Producto por escalar":
     escalar = st.number_input("Ingrese escalar distinto de 0", 
-                              value=2, 
-                              key="escalar_input")
+                            value=2, 
+                            key="escalar_input")
     if escalar == 0:
         st.error("El escalar no puede ser 0.")
     else:
