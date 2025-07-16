@@ -62,7 +62,7 @@ def verificar_compatibilidad(m1, m2, operacion):
 
 # Configuración de página
 st.set_page_config(layout="centered")
-st.title("Calculadora Avanzada de Matrices")
+st.title("Calculadora de Matrices")
 st.markdown("""
 <style>
 div[data-testid="stExpander"] div[role="button"] p {
