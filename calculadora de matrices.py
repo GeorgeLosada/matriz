@@ -85,7 +85,7 @@ A = st.session_state['A']
 B = st.session_state['B']
 
 # Sección de control de matrices
-st.header("📊 Configuración de Matrices")
+st.header("Configuración de Matrices")
 col1, col2 = st.columns(2)
 
 with col1:
